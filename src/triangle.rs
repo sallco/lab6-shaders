@@ -66,6 +66,10 @@ pub fn triangle(
             if !(-1.0..=1.0).contains(&depth) {
                 continue;
             }
+            if depth >= fb.depths[index] {
+                continue;
+            }
+            fb.depths[index] = depth;
             let denominator = wa * a.inv_w + wb * b.inv_w + wc * c.inv_w;
             let qa = wa * a.inv_w / denominator;
             let qb = wb * b.inv_w / denominator;
