@@ -18,6 +18,7 @@ pub const GLASS_SHININESS: f32 = 80.0;
 
 pub const TERRAIN_FREQUENCY: f32 = 4.3;
 pub const LAVA_WIDTH: f32 = 0.065;
+pub const LAVA_FLOW_SPEED: f32 = 2.8;
 
 pub struct Terrain {
     pub albedo: Vector3,
@@ -77,16 +78,7 @@ pub fn rocky_shader(f: &Fragment, u: &Uniforms) -> Vector3 {
     let normal = bump_normal(p, f.normal, u);
     let day = normal.dot(u.light_direction).max(0.0);
     let mut color = terrain.albedo * (0.11 + 0.89 * day);
-    let molten = mix(
-        rgb(0xa5223d),
-        rgb(0xff575e),
-        smooth(0.0, 0.75, terrain.lava),
-    );
-    let molten = mix(
-        molten,
-        rgb(0xffd6aa),
-        smooth(0.85, 1.0, terrain.lava) * 0.72,
-    );
+    let molten = lava_emission(p, terrain.lava, u);
     color = mix(color, molten, terrain.lava);
     color += night_emission(p, f.normal, terrain.lava, u);
     color += glass_reflection(f, normal, terrain.glass, u);
@@ -147,4 +139,19 @@ pub fn bump_normal(p: Vector3, normal: Vector3, u: &Uniforms) -> Vector3 {
         - height((p - bitangent * BUMP_STEP).normalized(), u))
         / (2.0 * BUMP_STEP);
     (normal - tangent * du * BUMP_STRENGTH - bitangent * dv * BUMP_STRENGTH).normalized()
+}
+
+pub fn lava_emission(p: Vector3, mask: f32, u: &Uniforms) -> Vector3 {
+    if mask < 0.001 {
+        return rgb(0x92162f);
+    }
+    let phase = p.dot(Vector3::new(14.0, -9.0, 17.0)) - u.time * LAVA_FLOW_SPEED
+        + u.noise.sample(p * 9.0) * 2.5;
+    let surge = smooth(0.15, 0.92, 0.5 + 0.5 * phase.sin());
+    let current = mix(rgb(0xa91e3b), rgb(0xff6b58), surge);
+    mix(
+        current,
+        rgb(0xffedbf),
+        surge.powi(3) * smooth(0.35, 1.0, mask) * 0.95,
+    )
 }
