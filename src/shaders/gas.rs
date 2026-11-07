@@ -14,15 +14,23 @@ pub const VORTEX_CENTER: Vector3 = Vector3 {
 };
 
 pub const BAND_FREQUENCY: f32 = 23.0;
-pub const TURBULENCE: f32 = 2.4;
+pub const TURBULENCE: f32 = 3.0;
+pub const WIND_SPEED: f32 = 0.38;
+pub const WAVE_SPEED: f32 = 1.4;
 
 pub fn gas_shader(f: &Fragment, u: &Uniforms) -> Vector3 {
     let p = f.position.normalized();
     let q = vortex(p);
-    let flow = u.noise.warp(q * 4.0, 0.8);
+    let (s, c) = (u.time * WIND_SPEED * (1.0 + 0.55 * (q.y * 7.0).sin())).sin_cos();
+    let wind = Vector3::new(q.x * c + q.z * s, q.y, -q.x * s + q.z * c);
+    let flow = u.noise.warp(wind * 4.0, 0.8);
+    let latitude = q.y
+        + 0.055 * (q.x * 7.0 + q.z * 4.0 + u.time * WAVE_SPEED).sin()
+        + 0.025 * (q.z * 11.0 - u.time * 0.9).sin();
     let turbulence = u.noise.sample(flow) * TURBULENCE;
     let bands = 0.5
-        + 0.5 * (q.y * BAND_FREQUENCY + turbulence + 0.3 * (q.x * 11.0 + q.z * 7.0).sin()).sin();
+        + 0.5
+            * (latitude * BAND_FREQUENCY + turbulence + 0.3 * (q.x * 11.0 + q.z * 7.0).sin()).sin();
     let mut color = mix(rgb(0x287334), rgb(0x68ab3a), smooth(0.0, 0.4, bands));
     color = mix(color, rgb(0xb3d34a), smooth(0.32, 0.78, bands));
     color = mix(color, rgb(0xf2e59a), smooth(0.76, 1.0, bands));
