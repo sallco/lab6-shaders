@@ -69,18 +69,11 @@ Se solicitan los seis efectos siguientes: 55 puntos adicionales potenciales, jun
 
 Los tres cuerpos, la esfera original, los shaders en CPU, los controles, las capturas y las explicaciones están incorporados. Se solicitan únicamente los seis efectos de la tabla: parallax y sombras de nubes son opcionales y quedan fuera del alcance acordado. El bloom es una mejora visual y no se cuenta como otro criterio.
 
-La entrega sigue pendiente del GIF del autor: las capturas estáticas y las pruebas no sustituyen la evidencia de animación y efectos dependientes de la luz exigida por la rúbrica.
 
-### Grabación pendiente
+### Grabación
 
-El GIF lo proporcionará el autor y se insertará aquí cuando esté disponible. La evidencia temporal y dependiente de luz queda pendiente de esa grabación.
+https://github.com/user-attachments/assets/93fca759-c3cf-40e0-a833-42f45c9b0c56
 
-Recorrido sugerido:
-
-1. En Cérula, mantener la cámara fija unos segundos y pausar/reanudar para mostrar que cambia el material.
-2. Seleccionar Obsidia y observar las nubes y las oleadas de lava sin mover la cámara: los cráteres y los canales conservan su ubicación.
-3. Pausar Obsidia y orbitar hacia la derecha hasta ver la noche; acercarse para observar minerales, vidrio y relieve. La luz permanece fija en el mundo.
-4. Seleccionar Artaud y dejar correr el tiempo con cámara fija para mostrar corrientes, ondas y vórtice. Acercarse después y usar `R` para recuperar el encuadre inicial.
 
 ## Renderer y verificación
 
