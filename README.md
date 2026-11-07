@@ -65,6 +65,12 @@ Se solicitan los seis efectos siguientes: 55 puntos adicionales potenciales, jun
 | Vórtice localizado — 10 | Artaud, `src/shaders/gas.rs` | `vortex`: distorsiona coordenadas antes de evaluar bandas; `VORTEX_RADIUS` controla extensión y `VORTEX_STRENGTH`, giro; `VORTEX_SPEED`, pulsación temporal. | Captura de Artaud; GIF pendiente para mostrar las corrientes y el vórtice cambiante. |
 | Bump mapping — 15 | Obsidia, `src/shaders/rocky.rs` | `height` y `bump_normal`: diferencias finitas tangenciales perturban la normal; `BUMP_STRENGTH` controla relieve y `BUMP_STEP`, muestreo. | Captura de Obsidia; GIF pendiente para observar el relieve bajo luz fija. |
 
+### Estado de la entrega
+
+Los tres cuerpos, la esfera original, los shaders en CPU, los controles, las capturas y las explicaciones están incorporados. Se solicitan únicamente los seis efectos de la tabla: parallax y sombras de nubes son opcionales y quedan fuera del alcance acordado. El bloom es una mejora visual y no se cuenta como otro criterio.
+
+La entrega sigue pendiente del GIF del autor: las capturas estáticas y las pruebas no sustituyen la evidencia de animación y efectos dependientes de la luz exigida por la rúbrica.
+
 ### Grabación pendiente
 
 El GIF lo proporcionará el autor y se insertará aquí cuando esté disponible. La evidencia temporal y dependiente de luz queda pendiente de esa grabación.
@@ -91,4 +97,4 @@ cargo run --release --locked -- --export-captures
 
 El último comando genera los tres PNG de `docs/` con cámara inicial y tiempo de 6 segundos; utiliza el mismo renderer y no requiere abrir una ventana. Reporta el tiempo de renderizado separado de la exportación. Las capturas no incluyen la interfaz de controles.
 
-Verificado en Linux: 21 pruebas sobre OBJ, cámara, controles, interpolación, profundidad, reproducibilidad y efectos. También se comprueban colores finitos, geometría compartida, nubes independientes, emisión nocturna, reflejos, normales perturbadas y vórtice. Se comprueba además que las animaciones de ambos planetas cambian de forma perceptible en un segundo, manteniendo la profundidad idéntica. Las pruebas del bloom verifican luz fuera de la superficie sin alterar el búfer de profundidad. El rendimiento varía según equipo, cuerpo y zoom; la pausa permite explorar sin que avance el material.
+Verificado en Linux: 23 pruebas sobre OBJ, cámara, controles, interpolación, profundidad, reproducibilidad y efectos. También se comprueban colores finitos, geometría compartida, nubes independientes, emisión nocturna, reflejos, normales perturbadas y vórtice. Se comprueba además que las animaciones de ambos planetas cambian de forma perceptible en un segundo, manteniendo la profundidad idéntica. Las pruebas del bloom verifican luz fuera de la superficie sin alterar el búfer de profundidad. `tests/rubric.rs` comprueba profundidad idéntica entre los tres cuerpos a distintos tiempos y que minerales nocturnos, reflejos y relieve contribuyen de forma perceptible sobre fragmentos visibles reales durante una órbita. El rendimiento varía según equipo, cuerpo y zoom; la pausa permite explorar sin que avance el material.
