@@ -5,6 +5,9 @@ use super::{
 use crate::triangle::Fragment;
 use raylib::prelude::*;
 
+pub const BUMP_STRENGTH: f32 = 0.038;
+pub const BUMP_STEP: f32 = 0.003;
+
 pub const CLOUD_COVERAGE: f32 = 0.53;
 pub const CLOUD_SPEED: f32 = 0.055;
 
@@ -71,7 +74,7 @@ pub fn terrain(p: Vector3, u: &Uniforms) -> Terrain {
 pub fn rocky_shader(f: &Fragment, u: &Uniforms) -> Vector3 {
     let p = f.position.normalized();
     let terrain = terrain(p, u);
-    let normal = f.normal;
+    let normal = bump_normal(p, f.normal, u);
     let day = normal.dot(u.light_direction).max(0.0);
     let mut color = terrain.albedo * (0.11 + 0.89 * day);
     let molten = mix(
@@ -120,4 +123,28 @@ pub fn cloud_mask(p: Vector3, time: f32, u: &Uniforms) -> f32 {
         .noise
         .warp(drift * 3.8 + Vector3::new(3.0, 14.0, 6.0), 0.9);
     smooth(CLOUD_COVERAGE, CLOUD_COVERAGE + 0.17, u.noise.fbm(q, 3))
+}
+
+pub fn height(p: Vector3, u: &Uniforms) -> f32 {
+    let q = u.noise.warp(p * TERRAIN_FREQUENCY, 0.6);
+    let lava = 1.0 - smooth(0.018, LAVA_WIDTH, u.noise.sample(q).abs());
+    let (rim, basin) = craters(p);
+    u.noise.sample(p * 7.0) * 0.16 + rim * 0.12 - basin * 0.09 - lava * 0.06
+}
+
+pub fn bump_normal(p: Vector3, normal: Vector3, u: &Uniforms) -> Vector3 {
+    let axis = if normal.y.abs() < 0.9 {
+        Vector3::new(0.0, 1.0, 0.0)
+    } else {
+        Vector3::new(1.0, 0.0, 0.0)
+    };
+    let tangent = normal.cross(axis).normalized();
+    let bitangent = normal.cross(tangent).normalized();
+    let du = (height((p + tangent * BUMP_STEP).normalized(), u)
+        - height((p - tangent * BUMP_STEP).normalized(), u))
+        / (2.0 * BUMP_STEP);
+    let dv = (height((p + bitangent * BUMP_STEP).normalized(), u)
+        - height((p - bitangent * BUMP_STEP).normalized(), u))
+        / (2.0 * BUMP_STEP);
+    (normal - tangent * du * BUMP_STRENGTH - bitangent * dv * BUMP_STRENGTH).normalized()
 }
