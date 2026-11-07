@@ -12,6 +12,7 @@ pub struct ScreenVertex {
 
 #[derive(Clone, Copy, Debug)]
 pub struct Fragment {
+    pub screen_index: usize,
     pub position: Vector3,
     pub normal: Vector3,
 }
@@ -76,6 +77,7 @@ pub fn triangle(
             let qc = wc * c.inv_w / denominator;
             let normal = a.normal * qa + b.normal * qb + c.normal * qc;
             let fragment = Fragment {
+                screen_index: index,
                 position: a.position * qa + b.position * qb + c.position * qc,
                 normal: normal.normalized(),
             };

@@ -2,7 +2,7 @@ use lab6_shaders::{
     camera::Camera,
     framebuffer::Framebuffer,
     obj::Obj,
-    renderer::render,
+    renderer::Renderer,
     shaders::{Body, Uniforms},
     state::State,
 };
@@ -18,6 +18,7 @@ fn run() -> Result<(), Box<dyn std::error::Error>> {
         let directory = std::path::Path::new(env!("CARGO_MANIFEST_DIR")).join("docs");
         std::fs::create_dir_all(&directory)?;
         let mut fb = Framebuffer::new(WIDTH, HEIGHT);
+        let mut renderer = Renderer::new(WIDTH, HEIGHT);
         for (body, filename) in [
             (Body::Star, "cerula.png"),
             (Body::Rocky, "obsidia.png"),
@@ -26,7 +27,7 @@ fn run() -> Result<(), Box<dyn std::error::Error>> {
             let mut uniforms = Uniforms::new(body, camera.eye());
             uniforms.time = 6.0;
             let started = std::time::Instant::now();
-            let fragments = render(&mut fb, &obj, &camera, &uniforms);
+            let fragments = renderer.render(&mut fb, &obj, &camera, &uniforms);
             let render_ms = started.elapsed().as_secs_f64() * 1000.0;
             fb.export_png(&directory.join(filename))?;
             println!(
@@ -44,6 +45,7 @@ fn run() -> Result<(), Box<dyn std::error::Error>> {
     let mut state = State::default();
     let mut uniforms = Uniforms::new(state.body, state.camera.eye());
     let mut fb = Framebuffer::new(WIDTH, HEIGHT);
+    let mut renderer = Renderer::new(WIDTH, HEIGHT);
     let (mut window, thread) = raylib::init()
         .size(WIDTH as i32, HEIGHT as i32)
         .title("Lab 6 | Cerula - Obsidia - Artaud | Shaders en CPU")
@@ -62,7 +64,7 @@ fn run() -> Result<(), Box<dyn std::error::Error>> {
             uniforms.body = state.body;
             uniforms.time = state.time;
             uniforms.camera_position = state.camera.eye();
-            render(&mut fb, &obj, &state.camera, &uniforms);
+            renderer.render(&mut fb, &obj, &state.camera, &uniforms);
             texture.update_texture(&fb.pixels)?;
             dirty = false;
         }

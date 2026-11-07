@@ -2,7 +2,7 @@ use lab6_shaders::{
     camera::Camera,
     framebuffer::Framebuffer,
     obj::Obj,
-    renderer::render,
+    renderer::Renderer,
     shaders::{
         Body, Uniforms, fragment_shader,
         gas::{VORTEX_CENTER, vortex},
@@ -36,6 +36,7 @@ fn all_shaders_are_finite_and_reproducible_at_poles_and_seams() {
         u.time = 6.0;
         for p in &positions {
             let f = Fragment {
+                screen_index: 0,
                 position: *p * 0.85,
                 normal: *p,
             };
@@ -51,6 +52,7 @@ fn all_shaders_are_finite_and_reproducible_at_poles_and_seams() {
 fn stellar_material_changes_with_time_but_ignores_external_light() {
     let mut u = Uniforms::new(Body::Star, Vector3::new(0.0, 0.0, 3.1));
     let f = Fragment {
+        screen_index: 0,
         position: Vector3::new(0.0, 0.0, 0.85),
         normal: Vector3::new(0.0, 0.0, 1.0),
     };
@@ -92,6 +94,7 @@ fn mineral_emission_only_appears_on_the_night_side() {
 fn glass_reflection_depends_on_material_and_view_direction() {
     let mut u = Uniforms::new(Body::Rocky, Vector3::new(0.0, 0.0, 3.1));
     let f = Fragment {
+        screen_index: 0,
         position: Vector3::new(0.0, 0.0, 0.85),
         normal: Vector3::new(0.0, 0.0, 1.0),
     };
@@ -128,13 +131,14 @@ fn three_bodies_share_geometry_and_have_distinct_reproducible_images() {
     let indices = obj.indices.clone();
     let camera = Camera::default();
     let mut fb = Framebuffer::new(160, 112);
+    let mut renderer = Renderer::new(160, 112);
     let mut images = Vec::new();
     for body in [Body::Star, Body::Rocky, Body::Gas] {
         let mut u = Uniforms::new(body, camera.eye());
         u.time = 6.0;
-        assert!(render(&mut fb, &obj, &camera, &u) > 0);
+        assert!(renderer.render(&mut fb, &obj, &camera, &u) > 0);
         let a = fb.pixels.clone();
-        render(&mut fb, &obj, &camera, &u);
+        renderer.render(&mut fb, &obj, &camera, &u);
         assert_eq!(a, fb.pixels);
         images.push(a);
     }

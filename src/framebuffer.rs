@@ -47,12 +47,15 @@ impl Framebuffer {
     }
 
     pub fn write_color(&mut self, index: usize, color: Vector3) {
-        let rgba = &mut self.pixels[index * 4..index * 4 + 4];
-        rgba.copy_from_slice(&[
-            (color.x.clamp(0.0, 1.0) * 255.0).round() as u8,
-            (color.y.clamp(0.0, 1.0) * 255.0).round() as u8,
-            (color.z.clamp(0.0, 1.0) * 255.0).round() as u8,
-            255,
-        ]);
+        self.pixels[index * 4..index * 4 + 4].copy_from_slice(&rgba(color));
     }
+}
+
+pub fn rgba(color: Vector3) -> [u8; 4] {
+    [
+        (color.x.clamp(0.0, 1.0) * 255.0).round() as u8,
+        (color.y.clamp(0.0, 1.0) * 255.0).round() as u8,
+        (color.z.clamp(0.0, 1.0) * 255.0).round() as u8,
+        255,
+    ]
 }
