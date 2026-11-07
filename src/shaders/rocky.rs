@@ -5,6 +5,8 @@ use super::{
 use crate::triangle::Fragment;
 use raylib::prelude::*;
 
+pub const NIGHT_GLOW: f32 = 0.75;
+
 pub const GLASS_SPECULAR: f32 = 1.6;
 pub const GLASS_SHININESS: f32 = 80.0;
 
@@ -80,6 +82,7 @@ pub fn rocky_shader(f: &Fragment, u: &Uniforms) -> Vector3 {
         smooth(0.85, 1.0, terrain.lava) * 0.72,
     );
     color = mix(color, molten, terrain.lava);
+    color += night_emission(p, f.normal, terrain.lava, u);
     color += glass_reflection(f, normal, terrain.glass, u);
     color
 }
@@ -89,4 +92,18 @@ pub fn glass_reflection(f: &Fragment, normal: Vector3, mask: f32, u: &Uniforms) 
     let half = (view + u.light_direction).normalized();
     let specular = normal.dot(half).max(0.0).powf(GLASS_SHININESS) * GLASS_SPECULAR * mask;
     rgb(0xb8edff) * specular * smooth(0.0, 0.15, normal.dot(u.light_direction))
+}
+
+pub fn night_emission(p: Vector3, normal: Vector3, lava: f32, u: &Uniforms) -> Vector3 {
+    let night = 1.0 - smooth(-0.12, 0.18, normal.dot(u.light_direction));
+    let thread = 1.0
+        - smooth(
+            0.008,
+            0.03,
+            u.noise
+                .sample(p * 26.0 + Vector3::new(17.0, 4.0, 9.0))
+                .abs(),
+        );
+    let minerals = smooth(0.49, 0.67, u.noise.fbm(p * 8.0, 2));
+    rgb(0x60cbd6) * thread * minerals * night * NIGHT_GLOW * (1.0 - lava)
 }
