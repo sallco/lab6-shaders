@@ -12,6 +12,33 @@ const HEIGHT: usize = 700;
 fn run() -> Result<(), Box<dyn std::error::Error>> {
     let obj = Obj::load(concat!(env!("CARGO_MANIFEST_DIR"), "/assets/sphere.obj"))?;
     let camera = Camera::default();
+    let args: Vec<String> = std::env::args().skip(1).collect();
+    if args == ["--export-captures"] {
+        let directory = std::path::Path::new(env!("CARGO_MANIFEST_DIR")).join("docs");
+        std::fs::create_dir_all(&directory)?;
+        let mut fb = Framebuffer::new(WIDTH, HEIGHT);
+        for (body, filename) in [
+            (Body::Star, "cerula.png"),
+            (Body::Rocky, "obsidia.png"),
+            (Body::Gas, "artaud.png"),
+        ] {
+            let mut uniforms = Uniforms::new(body, camera.eye());
+            uniforms.time = 6.0;
+            let started = std::time::Instant::now();
+            let fragments = render(&mut fb, &obj, &camera, &uniforms);
+            fb.export_png(&directory.join(filename))?;
+            println!(
+                "{}: {} triángulos, {fragments} fragmentos, {:.1} ms",
+                body.name(),
+                obj.indices.len() / 3,
+                started.elapsed().as_secs_f64() * 1000.0
+            );
+        }
+        return Ok(());
+    }
+    if !args.is_empty() {
+        return Err("Uso: cargo run --release -- [--export-captures]".into());
+    }
     let uniforms = Uniforms::new(Body::Star, camera.eye());
     let mut fb = Framebuffer::new(WIDTH, HEIGHT);
     let (mut window, thread) = raylib::init()
