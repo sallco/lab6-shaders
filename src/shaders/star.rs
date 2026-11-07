@@ -8,6 +8,8 @@ use raylib::prelude::*;
 pub const CELL_FREQUENCY: f32 = 5.6;
 pub const FILAMENT_CONTRAST: f32 = 10.0;
 pub const ACTIVITY_SPEED: f32 = 0.22;
+pub const EMISSION_GAIN: f32 = 1.3;
+pub const FLARE_STRENGTH: f32 = 0.3;
 
 pub fn star_shader(f: &Fragment, u: &Uniforms) -> Vector3 {
     let p = f.position.normalized();
@@ -28,5 +30,7 @@ pub fn star_shader(f: &Fragment, u: &Uniforms) -> Vector3 {
         .normal
         .dot((u.camera_position - f.position).normalized())
         .max(0.0);
-    color * (0.7 + 0.3 * facing.sqrt())
+    let pulse = 0.65 + 0.35 * (u.time * 2.0 + p.y * 9.0 + p.x * 6.0).sin();
+    let flare = rgb(0xb4eaff) * filament.powi(3) * pulse * FLARE_STRENGTH;
+    color * (0.82 + 0.18 * facing.sqrt()) * EMISSION_GAIN + flare
 }
