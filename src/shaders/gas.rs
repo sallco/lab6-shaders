@@ -7,6 +7,7 @@ use raylib::prelude::*;
 
 pub const VORTEX_RADIUS: f32 = 0.49;
 pub const VORTEX_STRENGTH: f32 = 7.0;
+pub const VORTEX_SPEED: f32 = 0.85;
 pub const VORTEX_CENTER: Vector3 = Vector3 {
     x: 0.35,
     y: -0.19,
@@ -20,7 +21,7 @@ pub const WAVE_SPEED: f32 = 1.4;
 
 pub fn gas_shader(f: &Fragment, u: &Uniforms) -> Vector3 {
     let p = f.position.normalized();
-    let q = vortex(p);
+    let q = vortex(p, u.time);
     let (s, c) = (u.time * WIND_SPEED * (1.0 + 0.55 * (q.y * 7.0).sin())).sin_cos();
     let wind = Vector3::new(q.x * c + q.z * s, q.y, -q.x * s + q.z * c);
     let flow = u.noise.warp(wind * 4.0, 0.8);
@@ -40,11 +41,12 @@ pub fn gas_shader(f: &Fragment, u: &Uniforms) -> Vector3 {
     color * (0.19 + 0.81 * day)
 }
 
-pub fn vortex(p: Vector3) -> Vector3 {
+pub fn vortex(p: Vector3, time: f32) -> Vector3 {
     let center = VORTEX_CENTER.normalized();
     let distance = (p - center).length();
     let influence = 1.0 - smooth(0.0, VORTEX_RADIUS, distance);
-    let angle = VORTEX_STRENGTH * influence * influence;
+    let strength = VORTEX_STRENGTH + 3.0 * (time * VORTEX_SPEED).sin();
+    let angle = strength * influence * influence;
     let (s, c) = angle.sin_cos();
     p * c + center.cross(p) * s + center * center.dot(p) * (1.0 - c)
 }

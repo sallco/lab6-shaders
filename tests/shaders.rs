@@ -118,9 +118,10 @@ fn bump_changes_normals_and_light_response_without_moving_vertices() {
 #[test]
 fn vortex_changes_local_coordinates_and_leaves_distant_bands_unchanged() {
     let far = Vector3::new(0.0, 1.0, 0.0);
-    assert!((vortex(far) - far).length() < 0.0001);
+    assert!((vortex(far, 0.0) - far).length() < 0.0001);
     let near = (VORTEX_CENTER + Vector3::new(0.18, 0.05, 0.0)).normalized();
-    let warped = vortex(near);
+    let warped = vortex(near, 0.0);
+    assert!((vortex(near, 1.0) - warped).length() > 0.01);
     assert!((warped - near).length() > 0.02);
     assert!((warped.length() - 1.0).abs() < 0.0001);
 }
