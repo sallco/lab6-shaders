@@ -5,6 +5,9 @@ use super::{
 use crate::triangle::Fragment;
 use raylib::prelude::*;
 
+pub const GLASS_SPECULAR: f32 = 1.6;
+pub const GLASS_SHININESS: f32 = 80.0;
+
 pub const TERRAIN_FREQUENCY: f32 = 4.3;
 pub const LAVA_WIDTH: f32 = 0.065;
 
@@ -77,5 +80,13 @@ pub fn rocky_shader(f: &Fragment, u: &Uniforms) -> Vector3 {
         smooth(0.85, 1.0, terrain.lava) * 0.72,
     );
     color = mix(color, molten, terrain.lava);
+    color += glass_reflection(f, normal, terrain.glass, u);
     color
+}
+
+pub fn glass_reflection(f: &Fragment, normal: Vector3, mask: f32, u: &Uniforms) -> Vector3 {
+    let view = (u.camera_position - f.position).normalized();
+    let half = (view + u.light_direction).normalized();
+    let specular = normal.dot(half).max(0.0).powf(GLASS_SHININESS) * GLASS_SPECULAR * mask;
+    rgb(0xb8edff) * specular * smooth(0.0, 0.15, normal.dot(u.light_direction))
 }
