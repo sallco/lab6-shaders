@@ -5,6 +5,9 @@ use super::{
 use crate::triangle::Fragment;
 use raylib::prelude::*;
 
+pub const CLOUD_COVERAGE: f32 = 0.53;
+pub const CLOUD_SPEED: f32 = 0.055;
+
 pub const NIGHT_GLOW: f32 = 0.75;
 
 pub const GLASS_SPECULAR: f32 = 1.6;
@@ -84,6 +87,8 @@ pub fn rocky_shader(f: &Fragment, u: &Uniforms) -> Vector3 {
     color = mix(color, molten, terrain.lava);
     color += night_emission(p, f.normal, terrain.lava, u);
     color += glass_reflection(f, normal, terrain.glass, u);
+    let cloud = cloud_mask(p, u.time, u);
+    color = mix(color, rgb(0xb8c5d2) * (0.16 + 0.84 * day), cloud * 0.68);
     color
 }
 
@@ -106,4 +111,13 @@ pub fn night_emission(p: Vector3, normal: Vector3, lava: f32, u: &Uniforms) -> V
         );
     let minerals = smooth(0.49, 0.67, u.noise.fbm(p * 8.0, 2));
     rgb(0x60cbd6) * thread * minerals * night * NIGHT_GLOW * (1.0 - lava)
+}
+
+pub fn cloud_mask(p: Vector3, time: f32, u: &Uniforms) -> f32 {
+    let (s, c) = (time * CLOUD_SPEED).sin_cos();
+    let drift = Vector3::new(p.x * c + p.z * s, p.y, -p.x * s + p.z * c);
+    let q = u
+        .noise
+        .warp(drift * 3.8 + Vector3::new(3.0, 14.0, 6.0), 0.9);
+    smooth(CLOUD_COVERAGE, CLOUD_COVERAGE + 0.17, u.noise.fbm(q, 3))
 }
