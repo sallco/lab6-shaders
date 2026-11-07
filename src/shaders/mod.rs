@@ -1,3 +1,4 @@
+pub mod procedural;
 use crate::triangle::Fragment;
 use raylib::prelude::*;
 
@@ -22,6 +23,7 @@ pub struct Uniforms {
     pub time: f32,
     pub camera_position: Vector3,
     pub light_direction: Vector3,
+    pub noise: procedural::Noise,
 }
 impl Uniforms {
     pub fn new(body: Body, camera_position: Vector3) -> Self {
@@ -29,6 +31,7 @@ impl Uniforms {
             body,
             time: 0.0,
             camera_position,
+            noise: procedural::Noise::default(),
             light_direction: Vector3::new(-0.8, 0.25, 0.45).normalized(),
         }
     }
