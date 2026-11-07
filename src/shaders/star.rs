@@ -12,8 +12,9 @@ pub const ACTIVITY_SPEED: f32 = 0.22;
 pub fn star_shader(f: &Fragment, u: &Uniforms) -> Vector3 {
     let p = f.position.normalized();
     let q = u.noise.warp(p * CELL_FREQUENCY, 0.85);
-    let cells = u.noise.fbm(q * 1.4, 3);
-    let filament = (1.0 - u.noise.sample(q * 2.8).abs()).powf(FILAMENT_CONTRAST);
+    let cells = u.noise.evolving(q * 1.4, u.time * ACTIVITY_SPEED, 3);
+    let activity = u.noise.evolving(q * 2.8, u.time * ACTIVITY_SPEED * 1.7, 2);
+    let filament = (1.0 - (activity * 2.0 - 1.0).abs()).powf(FILAMENT_CONTRAST);
     let spots = smooth(
         0.52,
         0.72,
