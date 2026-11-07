@@ -1,19 +1,22 @@
 use crate::{
+    bloom::Bloom,
     camera::Camera,
     framebuffer::{Framebuffer, rgba},
     obj::Obj,
-    shaders::{Uniforms, fragment_shader},
+    shaders::{Body, Uniforms, fragment_shader},
     triangle::{Fragment, triangle},
 };
 use raylib::prelude::*;
 
 pub struct Renderer {
     fragments: Vec<Option<Fragment>>,
+    bloom: Bloom,
 }
 impl Renderer {
     pub fn new(width: usize, height: usize) -> Self {
         Self {
             fragments: vec![None; width * height],
+            bloom: Bloom::new(width, height),
         }
     }
     pub fn render(
@@ -55,6 +58,9 @@ impl Renderer {
                 });
             }
         });
+        if uniforms.body == Body::Star {
+            self.bloom.apply(fb);
+        }
         count
     }
 }
