@@ -25,6 +25,21 @@ fn multiply(m: Matrix, v: Vector4) -> Vector4 {
     )
 }
 impl Camera {
+    pub fn update(&mut self, dt: f32, held: impl Fn(KeyboardKey) -> bool) {
+        use KeyboardKey::*;
+        let dt = dt.clamp(0.0, 0.1);
+        let axis =
+            |positive, negative| (i32::from(held(positive)) - i32::from(held(negative))) as f32;
+        self.yaw =
+            (self.yaw + axis(KEY_RIGHT, KEY_LEFT) * dt * 1.3).rem_euclid(std::f32::consts::TAU);
+        self.pitch = (self.pitch + axis(KEY_UP, KEY_DOWN) * dt * 1.1).clamp(-1.3, 1.3);
+        let zoom_in = held(KEY_EQUAL) || held(KEY_KP_ADD);
+        let zoom_out = held(KEY_MINUS) || held(KEY_KP_SUBTRACT);
+        self.distance = (self.distance
+            * ((i32::from(zoom_out) - i32::from(zoom_in)) as f32 * dt).exp())
+        .clamp(1.7, 5.5);
+    }
+
     pub fn eye(&self) -> Vector3 {
         Vector3::new(
             self.yaw.sin() * self.pitch.cos(),
