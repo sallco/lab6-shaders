@@ -1,4 +1,5 @@
 pub mod procedural;
+pub mod star;
 use crate::triangle::Fragment;
 use raylib::prelude::*;
 
@@ -38,6 +39,9 @@ impl Uniforms {
 }
 
 pub fn fragment_shader(fragment: &Fragment, uniforms: &Uniforms) -> Vector3 {
+    if uniforms.body == Body::Star {
+        return star::star_shader(fragment, uniforms);
+    }
     Vector3::new(0.45, 0.62, 0.8)
         * (0.12 + 0.88 * fragment.normal.dot(uniforms.light_direction).max(0.0))
 }
