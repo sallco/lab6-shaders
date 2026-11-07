@@ -58,22 +58,22 @@ Se solicitan los seis efectos siguientes: 55 puntos adicionales potenciales, jun
 
 | Efecto | Cuerpo y archivo | Función y parámetro ajustable | Evidencia |
 | --- | --- | --- | --- |
-| Material animado — 5 | Cérula, `src/shaders/star.rs` | `star_shader`: `ACTIVITY_SPEED` cambia la velocidad del ruido temporal. | Captura de Cérula; GIF pendiente para observar la evolución. |
-| Día/noche — 5 | Obsidia, `src/shaders/rocky.rs` | `night_emission`: la normal y la luz enmascaran minerales emisivos; `NIGHT_GLOW` controla su brillo nocturno. | GIF pendiente: orbitar hacia el hemisferio oscuro. |
-| Respuestas distintas a la luz — 10 | Obsidia, `src/shaders/rocky.rs` | `glass_reflection`: reflejo dependiente de cámara y material; `GLASS_SPECULAR` controla intensidad y `GLASS_SHININESS`, concentración. | Captura de Obsidia; GIF pendiente para comprobar los reflejos al orbitar. |
-| Nubes procedurales — 10 | Obsidia, `src/shaders/rocky.rs` | `cloud_mask`: mezcla una máscara sobre la superficie; subir `CLOUD_COVERAGE` reduce cobertura y `CLOUD_SPEED` aumenta velocidad. | Captura de Obsidia; GIF pendiente con cámara fija y tiempo activo. |
-| Vórtice localizado — 10 | Artaud, `src/shaders/gas.rs` | `vortex`: distorsiona coordenadas antes de evaluar bandas; `VORTEX_RADIUS` controla extensión y `VORTEX_STRENGTH`, giro; `VORTEX_SPEED`, pulsación temporal. | Captura de Artaud; GIF pendiente para mostrar las corrientes y el vórtice cambiante. |
-| Bump mapping — 15 | Obsidia, `src/shaders/rocky.rs` | `height` y `bump_normal`: diferencias finitas tangenciales perturban la normal; `BUMP_STRENGTH` controla relieve y `BUMP_STEP`, muestreo. | Captura de Obsidia; GIF pendiente para observar el relieve bajo luz fija. |
+| Material animado — 5 | Cérula, `src/shaders/star.rs` | `star_shader`: `ACTIVITY_SPEED` cambia la velocidad del ruido temporal. | Captura de Cérula y [video de su evolución superficial](#grabación). |
+| Día/noche — 5 | Obsidia, `src/shaders/rocky.rs` | `night_emission`: la normal y la luz enmascaran minerales emisivos; `NIGHT_GLOW` controla su brillo nocturno. | [Video](#grabación): minerales del hemisferio nocturno durante la exploración de Obsidia. |
+| Respuestas distintas a la luz — 10 | Obsidia, `src/shaders/rocky.rs` | `glass_reflection`: reflejo dependiente de cámara y material; `GLASS_SPECULAR` controla intensidad y `GLASS_SHININESS`, concentración. | Captura y [video](#grabación): reflejos del vidrio al cambiar la cámara. |
+| Nubes procedurales — 10 | Obsidia, `src/shaders/rocky.rs` | `cloud_mask`: mezcla una máscara sobre la superficie; subir `CLOUD_COVERAGE` reduce cobertura y `CLOUD_SPEED` aumenta velocidad. | [Video](#grabación): nubes y frentes térmicos sobre los canales y cráteres de Obsidia. |
+| Vórtice localizado — 10 | Artaud, `src/shaders/gas.rs` | `vortex`: distorsiona coordenadas antes de evaluar bandas; `VORTEX_RADIUS` controla extensión y `VORTEX_STRENGTH`, giro; `VORTEX_SPEED`, pulsación temporal. | Captura y [video](#grabación): bandas y vórtice de Artaud en movimiento. |
+| Bump mapping — 15 | Obsidia, `src/shaders/rocky.rs` | `height` y `bump_normal`: diferencias finitas tangenciales perturban la normal; `BUMP_STRENGTH` controla relieve y `BUMP_STEP`, muestreo. | Captura y [video](#grabación): relieve de Obsidia durante el acercamiento y la órbita. |
 
 ### Estado de la entrega
 
 Los tres cuerpos, la esfera original, los shaders en CPU, los controles, las capturas y las explicaciones están incorporados. Se solicitan únicamente los seis efectos de la tabla: parallax y sombras de nubes son opcionales y quedan fuera del alcance acordado. El bloom es una mejora visual y no se cuenta como otro criterio.
 
-
 ### Grabación
 
-https://github.com/user-attachments/assets/93fca759-c3cf-40e0-a833-42f45c9b0c56
+Video de aproximadamente 49 segundos con Cérula, Obsidia y Artaud: evolución del material, nubes, lava, tormenta y exploración mediante cámara orbital y zoom.
 
+https://github.com/user-attachments/assets/93fca759-c3cf-40e0-a833-42f45c9b0c56
 
 ## Renderer y verificación
 
