@@ -1,3 +1,4 @@
+pub mod gas;
 pub mod procedural;
 pub mod rocky;
 pub mod star;
@@ -46,6 +47,5 @@ pub fn fragment_shader(fragment: &Fragment, uniforms: &Uniforms) -> Vector3 {
     if uniforms.body == Body::Rocky {
         return rocky::rocky_shader(fragment, uniforms);
     }
-    Vector3::new(0.45, 0.62, 0.8)
-        * (0.12 + 0.88 * fragment.normal.dot(uniforms.light_direction).max(0.0))
+    gas::gas_shader(fragment, uniforms)
 }
