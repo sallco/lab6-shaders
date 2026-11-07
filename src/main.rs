@@ -27,12 +27,13 @@ fn run() -> Result<(), Box<dyn std::error::Error>> {
             uniforms.time = 6.0;
             let started = std::time::Instant::now();
             let fragments = render(&mut fb, &obj, &camera, &uniforms);
+            let render_ms = started.elapsed().as_secs_f64() * 1000.0;
             fb.export_png(&directory.join(filename))?;
             println!(
                 "{}: {} triángulos, {fragments} fragmentos, {:.1} ms",
                 body.name(),
                 obj.indices.len() / 3,
-                started.elapsed().as_secs_f64() * 1000.0
+                render_ms
             );
         }
         return Ok(());
